@@ -6,7 +6,6 @@ package ships;
 
 import Bullets.BulletEmitter;
 import Bullets.BulletManager;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Vector2f;
 import shmuperduper.ShmuperDuper;
 import utilities.Util;
@@ -18,17 +17,23 @@ import utilities.Util;
 public class EnemyShip extends Ship {
 
     Vector2f target;
+    float speed = 0.0002f;
     
-    public EnemyShip(Image image) {
-        super(image);
+    public EnemyShip(int srcCol, int srcRow) {
+        super(srcCol, srcRow);
         target = new Vector2f();
         setNewTarget();
         
         emitters = new BulletEmitter[]{
-           new BulletEmitter(500f, 1, 0, 0, 0.15f)
+           new BulletEmitter(400f, 1, 0, 0, 0.15f)
         };
         
-        health = 100;
+        hitbox.x = 8;
+        hitbox.y = 8;
+        hitbox.width = 46;
+        hitbox.height = 46;
+        
+        health = 40;
     }
     
     private void setNewTarget(){
@@ -47,8 +52,8 @@ public class EnemyShip extends Ship {
             emitters[i].update(dt);
         }
         
-        x = Util.Lerp(x, target.x, 0.01f);
-        y = Util.Lerp(y, target.y, 0.01f);
+        x = Util.Lerp(x, target.x, speed * dt);
+        y = Util.Lerp(y, target.y, speed * dt);
         
         if(Util.distance(x, y, target.x, target.y) < 24f){
             setNewTarget();

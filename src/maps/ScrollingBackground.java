@@ -8,6 +8,7 @@ import content.ContentManager;
 import entities.Entity;
 import java.util.ArrayList;
 import java.util.List;
+import org.newdawn.slick.Image;
 import utilities.Util;
 
 /**
@@ -16,9 +17,10 @@ import utilities.Util;
  */
 public class ScrollingBackground {
 
-    List<Entity> objects;
-    public float scrollSpeed = 0.5f;
+    public float scrollSpeed = 0.08f;
     int width, height;
+    Image bgImage, mask;
+    float y = 0f;
     
     public ScrollingBackground(int width, int height) {
         this.width = width;
@@ -26,30 +28,21 @@ public class ScrollingBackground {
     }
     
     public void load(ContentManager content){
-        objects = new ArrayList<Entity>();
-        for (int i = 0; i < 50; i++) {
-            Entity e = new Entity(content.loadImage("gfx/bg" + 1 + ".png"));
-            e.x = -500 + (Util.Rand(width + 500));
-            e.y = Util.Rand(height);
-            objects.add(e);            
-        }
+        bgImage = content.loadImage("gfx/water.png");
+        mask = content.loadImage("gfx/water_transp.png");        
     }
     
     public void update(float dt){
-        for (int i = 0; i < objects.size(); i++) {
-            Entity e = objects.get(i);
-            e.y += scrollSpeed;
-            if(e.y > height + e.getImage().getHeight()){
-                e.y = -Util.Rand(500);
-                e.y -= e.getImage().getHeight();
-            }
+        
+        y += scrollSpeed * dt;
+        if(y > height){
+            y = 0f;
         }
     }
     
     public void draw(){
-        for (int i = 0; i < objects.size(); i++) {
-            Entity e = objects.get(i);
-            e.draw();
-        }
+        bgImage.draw(0f, 0f);
+        mask.draw(0f, y - height);
+        mask.draw(0f, y);
     }
 }

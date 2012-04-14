@@ -8,8 +8,6 @@ import Bullets.BulletEmitter;
 import Bullets.BulletManager;
 import input.InputManager;
 import org.lwjgl.input.Keyboard;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.geom.Vector2f;
 
 /**
  *
@@ -19,16 +17,19 @@ public class PlayerShip extends Ship {
 
     private float speed = 0.3f;
 
-    public PlayerShip(Image image) {
-        super(image);
+    public PlayerShip() {
+        super(0, 0);
         emitters = new BulletEmitter[]{
-            new BulletEmitter(40f, 1, -27f, 0, 1.7f),
-            new BulletEmitter(100f, 1, -10f, 0, 1.2f),
-            new BulletEmitter(100f, 1, 10f, 0, 1.2f),
-            new BulletEmitter(40f, 1, 27f, 0, 1.7f)
+            new BulletEmitter(40f, 1, -27f, 0, 2f),
+            new BulletEmitter(20f, 1, -10f, 0, 3f),
+            new BulletEmitter(20f, 1, 10f, 0, 3f),
+            new BulletEmitter(40f, 1, 27f, 0, 2f)
         };
-        
         health = 1000;
+        hitbox.x = 16;
+        hitbox.y = 16;
+        hitbox.width = 32;
+        hitbox.height = 32;
     }
 
     @Override

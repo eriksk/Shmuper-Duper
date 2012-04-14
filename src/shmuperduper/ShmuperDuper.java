@@ -4,6 +4,7 @@
  */
 package shmuperduper;
 
+import input.InputManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.input.Keyboard;
@@ -21,8 +22,10 @@ public class ShmuperDuper extends BasicGame {
 
     public static final int width = 512;
     public static final int height = 720;
-    private static final int fps = 60;
+    private static final int fps = -1;
     private static final boolean fullscreen = false;
+    public static boolean debug = false;
+    
     GameManager gm;
 
     public ShmuperDuper() {
@@ -40,6 +43,11 @@ public class ShmuperDuper extends BasicGame {
         if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
             exit();
         }
+        
+        if(InputManager.I().isKeyDown(Keyboard.KEY_D)){
+            debug = !debug;
+        }
+        
         gm.update(delta);
     }
 

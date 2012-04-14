@@ -4,23 +4,22 @@
  */
 package Bullets;
 
-import entities.Entity;
-import org.newdawn.slick.Image;
+import geoms.Rectangle;
 
 /**
  *
  * @author Erik
  */
-public class Bullet extends Entity {
+public class Bullet{
     public int owner;
 
-    public Bullet(Image image) {
-        super(image);
+    public float x, y, vx, vy, rotation, ox, oy;
+    public int srcCol, srcRow;
+    public Rectangle hitbox;
+    
+    public Bullet() {
+        ox = 32;
+        oy = 32;
+        hitbox = new Rectangle();
     }
-
-    @Override
-    public void update(float dt) {
-        x += vx * dt;
-        y += vy * dt;
-    }   
 }
