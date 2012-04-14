@@ -4,9 +4,12 @@
  */
 package particles;
 
+import audio.AudioManager;
+import collision.CollisionManager;
 import content.ContentManager;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SpriteSheet;
+import ships.PlayerShip;
 import utilities.ListUtils;
 import utilities.Pool;
 import utilities.Util;
@@ -15,11 +18,11 @@ import utilities.Util;
  *
  * @author Erik
  */
-public class ParticleManagerImpl extends ParticleManager{
+public class ParticleManagerImpl extends ParticleManager {
 
     private Image texture;
     private SpriteSheet sheet;
-    
+
     public ParticleManagerImpl(int width, int height) {
         super(width, height);
     }
@@ -29,47 +32,78 @@ public class ParticleManagerImpl extends ParticleManager{
         super.load(content);
         particles = new Pool(1024);
         particles.init(ListUtils.allocate(particles.getCapacity(), Particle.class));
-        
+
         texture = content.loadImage("gfx/particles.png");
         sheet = new SpriteSheet(texture, 16, 16);
     }
     
-    public void explode(float x, float y){       
-        for (int i = 0; i < 128; i++) {
-            Particle p = (Particle)particles.pop();
+    public void reset(){
+        particles.clear();
+    }
+
+    public void explode(float x, float y) {
+        for (int i = 0; i < 64; i++) {
+            Particle p = (Particle) particles.pop();
             p.current = 0f;
             p.duration = Util.Rand(400, 1000);
-            p.x = x;
-            p.y = y;
-            p.vx = Util.Rand(-1f, 1f) * 0.1f;
-            p.vy = Util.Rand(-1f, 1f) * 0.1f;
-            p.x += p.vx * Util.Rand(32f, 128f);
-            p.y += p.vy * Util.Rand(32f, 128f);
+            p.x = x + Util.Rand(-64, 64);
+            p.y = y + Util.Rand(-64, 64);
+            p.vx = Util.Rand(-1f, 1f) * 0.8f;
+            p.vy = Util.Rand(-1f, 1f) * 0.8f;
             p.srcCol = 0;
             p.srcRow = 0;
         }
     }
 
-    @Override
-    public void update(float dt) {
+    public void update(float dt, PlayerShip player) {
+        float decel = 0.001f;
         for (int i = 0; i < particles.getCount(); i++) {
-            Particle p = (Particle)particles.get(i);
-            p.current += dt;
-            if(p.current > p.duration){
-                particles.push(i--);
+            Particle p = (Particle) particles.get(i);
+            if (p.vx == 0f && p.vy == 0f) {
+                p.x = Util.Lerp(p.x, player.x + player.hitbox.width / 2f, 0.001f * dt);
+                p.y = Util.Lerp(p.y, player.y + player.hitbox.height / 2f, 0.001f * dt);
+                if (CollisionManager.intersects(p, player)) {
+                    AudioManager.I().playSound("coin");
+                    player.score += 10;
+                    particles.push(i--);
+                }
             }else{
                 p.x += p.vx * dt;
                 p.y += p.vy * dt;
+                if(p.vx > 0f){
+                    p.vx -= decel * dt;
+                    if(p.vx < 0f){
+                        p.vx = 0f;
+                    }
+                }
+                if(p.vx < 0f){
+                    p.vx += decel * dt;
+                    if(p.vx > 0f){
+                        p.vx = 0f;
+                    }
+                }
+                if(p.vy > 0f){
+                    p.vy -= decel * dt;
+                    if(p.vy < 0f){
+                        p.vy = 0f;
+                    }
+                }
+                if(p.vy < 0f){
+                    p.vy += decel * dt;
+                    if(p.vy > 0f){
+                        p.vy = 0f;
+                    }
+                }
             }
         }
     }
 
     @Override
-    public void draw() {        
+    public void draw() {
         texture.startUse();
         for (int i = 0; i < particles.getCount(); i++) {
-            Particle p = (Particle)particles.get(i);
-            sheet.renderInUse((int)p.x, (int)p.y, p.srcCol, p.srcRow);
+            Particle p = (Particle) particles.get(i);
+            sheet.renderInUse((int) p.x, (int) p.y, p.srcCol, p.srcRow);
         }
         texture.endUse();
     }

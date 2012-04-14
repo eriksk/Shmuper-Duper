@@ -4,7 +4,9 @@
  */
 package Bullets;
 
+import audio.AudioManager;
 import content.ContentManager;
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SpriteSheet;
@@ -39,38 +41,12 @@ public class BulletManager {
         enemyBullets.init(ListUtils.allocate(enemyBullets.getCapacity(), Bullet.class));
 
     }
-
-    public void firePlayer(float x, float y, float speed, float angle) {
-        Bullet b = (Bullet) playerBullets.pop();
-        b.x = x;
-        b.y = y;
-        b.vx = (float) Math.cos(angle) * speed;
-        b.vy = (float) Math.sin(angle) * speed;
-        b.rotation = angle;
-        b.srcCol = 0;
-        b.srcRow = 0;
-        b.hitbox.x = 16;
-        b.hitbox.y = 16;
-        b.hitbox.width = 24;
-        b.hitbox.height = 24;
+    
+    public void reset(){
+        playerBullets.clear();
+        enemyBullets.clear();
     }
-
-    public void fireEnemy(float x, float y, float speed, float angle) {
-        Bullet b = (Bullet) enemyBullets.pop();
-        b.x = x;
-        b.y = y;
-        b.vx = (float) Math.cos(angle) * speed;
-        b.vy = (float) Math.sin(angle) * speed;
-        b.rotation = angle;
-        b.srcCol = 1;
-        b.srcRow = 0;
-        b.hitbox.x = 16;
-        b.hitbox.y = 16;
-        b.hitbox.width = 32;
-        b.hitbox.height = 32;
-
-    }
-
+    
     public void update(float dt) {
         for (int i = 0; i < playerBullets.getCount(); i++) {
             Bullet b = (Bullet) playerBullets.getItems().get(i);
@@ -102,23 +78,23 @@ public class BulletManager {
         if (ShmuperDuper.debug) {
             for (int i = 0; i < enemyBullets.getCount(); i++) {
                 Bullet b = (Bullet) enemyBullets.getItems().get(i);
-                g.drawRect(b.x + 16, b.y + 16, 32, 32);
+                g.drawRect(b.x + b.hitbox.x, b.y + b.hitbox.y, b.hitbox.width, b.hitbox.height);
             }
         }
     }
 
     public void drawPlayerBullets(Graphics g) {
-        texture.startUse();
         for (int i = 0; i < playerBullets.getCount(); i++) {
             Bullet b = (Bullet) playerBullets.getItems().get(i);
-            sheet.renderInUse((int) b.x, (int) b.y, b.srcCol, b.srcRow);
+            texture.setCenterOfRotation((b.srcCol * 64) + 32f, (b.srcRow * 64) + 32f);
+            texture.setRotation((float) Math.toDegrees(b.rotation));
+            texture.draw((int) b.x, (int) b.y, (int) b.x + 64, (int) b.y + 64, 0, 0, 64, 64);
         }
-        texture.endUse();
 
         if (ShmuperDuper.debug) {
             for (int i = 0; i < playerBullets.getCount(); i++) {
                 Bullet b = (Bullet) playerBullets.getItems().get(i);
-                g.drawRect(b.x + 16, b.y, 24, 64);
+                g.drawRect(b.x + b.hitbox.x, b.y + b.hitbox.y, b.hitbox.width, b.hitbox.height);
             }
         }
     }

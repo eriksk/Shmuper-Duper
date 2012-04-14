@@ -8,6 +8,7 @@ import input.InputManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.openal.AL;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -36,6 +37,7 @@ public class ShmuperDuper extends BasicGame {
     public void init(GameContainer container) throws SlickException {
         gm = new GameManager(width, height);
         gm.load(container);
+        container.setShowFPS(false);
     }
 
     @Override
@@ -69,6 +71,7 @@ public class ShmuperDuper extends BasicGame {
     }
 
     public static void exit() {
+        AL.destroy();
         gc.exit();
     }
 }

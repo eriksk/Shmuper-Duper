@@ -5,6 +5,7 @@
 package shmuperduper;
 
 import Bullets.BulletManager;
+import audio.AudioManager;
 import collision.CollisionManager;
 import content.ContentManager;
 import maps.ScrollingBackground;
@@ -14,6 +15,7 @@ import org.newdawn.slick.Graphics;
 import particles.ParticleManager;
 import particles.ParticleManagerImpl;
 import ships.ShipManager;
+import ships.ShipSpawner;
 
 /**
  *
@@ -32,6 +34,7 @@ public class GameManager {
     private CollisionManager collMan;
     private ShipManager shipMan;
     private ParticleManagerImpl pMan;
+    private ShipSpawner spawner;
     
     public GameManager(int width, int height) {
         this.width = width;
@@ -48,20 +51,35 @@ public class GameManager {
         bg = new ScrollingBackground(width, height);
         bg.load(content);
         
-        collMan = new CollisionManager();
+        collMan = new CollisionManager(this);
         shipMan = new ShipManager(width, height);
         shipMan.load(content);
         
         pMan = new ParticleManagerImpl(width, height);
         pMan.load(content);
+        
+        spawner = new ShipSpawner(width, height);
+        
+        AudioManager.I().load(content);        
+        AudioManager.I().playSong("song1");
+    }
+    
+    public void reset(){
+        AudioManager.I().resetSong("song1");
+        shipMan.player.score = 0;
+        shipMan.reset();
+        spawner.reset();
+        pMan.reset();
+        bulletMan.reset();
     }
 
     public void update(float dt) {
+        spawner.update(dt, shipMan, content);
         shipMan.update(dt, bulletMan);
         bulletMan.update(dt);
         collMan.doCollision(shipMan.player, shipMan.enemies, bulletMan, pMan);
         
-        pMan.update(dt);
+        pMan.update(dt, shipMan.player);
         bg.update(dt);
     }
 
@@ -70,11 +88,15 @@ public class GameManager {
         g.fillRect(0, 0, width, height);
         
         bg.draw();
+        shipMan.drawShadows();
+        pMan.draw();
         shipMan.drawEnemies(g);
         bulletMan.drawPlayerBullets(g);
         shipMan.drawPlayers(g);
         bulletMan.drawEnemyBullets(g);
         
-        pMan.draw();
+        // hud
+        g.setColor(Color.white);
+        g.drawString("Score: " + shipMan.player.score, 16, 16);
     }
 }

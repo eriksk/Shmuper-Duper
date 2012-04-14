@@ -16,35 +16,31 @@ import org.lwjgl.input.Keyboard;
 public class PlayerShip extends Ship {
 
     private float speed = 0.3f;
+    public int score = 0;
 
     public PlayerShip() {
         super(0, 0);
         emitters = new BulletEmitter[]{
-            new BulletEmitter(40f, 1, -27f, 0, 2f),
-            new BulletEmitter(20f, 1, -10f, 0, 3f),
-            new BulletEmitter(20f, 1, 10f, 0, 3f),
-            new BulletEmitter(40f, 1, 27f, 0, 2f)
+            new BulletEmitter(40f, 6, -24f, -10f, 2f, (float) Math.toRadians(-110), false, 0f, 60f),
+            new BulletEmitter(20f, 4, -10f, 0, 3f, (float) Math.toRadians(-90), false, 0f, 60f),
+            new BulletEmitter(20f, 4, 10f, 0, 3f, (float) Math.toRadians(-90), false, 0f, 60f),
+            new BulletEmitter(40f, 6, 24f, -10f, 2f, (float) Math.toRadians(-70), false, 0f, 60f)
         };
         health = 1000;
-        hitbox.x = 16;
-        hitbox.y = 16;
-        hitbox.width = 32;
-        hitbox.height = 32;
+        hitbox.x = 24;
+        hitbox.y = 24;
+        hitbox.width = 18;
+        hitbox.height = 18;
     }
 
-    @Override
-    public void update(float dt, BulletManager bulletMan) {
+    public void update(float dt, BulletManager bulletMan, ShipManager shipMan) {
         if (InputManager.I().isKeyDown(Keyboard.KEY_SPACE)) {
             for (int i = 0; i < emitters.length; i++) {
                 BulletEmitter be = emitters[i];
-                if (be.fire()) {
-                    bulletMan.firePlayer(x + be.offsetX, y + be.offsetY, be.speed, (float)Math.toRadians(-90f));
-                }
+                be.update(dt, x + be.offsetX, y + be.offsetY, bulletMan.playerBullets, 16, 16, 24, 24, 0, 0, this, "fire");
             }
         }
-        for (int i = 0; i < emitters.length; i++) {
-            emitters[i].update(dt);
-        }
+
         if (InputManager.I().isKeyDown(Keyboard.KEY_LEFT)) {
             x -= speed * dt;
         }

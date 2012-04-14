@@ -25,15 +25,15 @@ public class EnemyShip extends Ship {
         setNewTarget();
         
         emitters = new BulletEmitter[]{
-           new BulletEmitter(400f, 1, 0, 0, 0.15f)
+           new BulletEmitter(100f, 3, 0, 0, 0.15f, 0f, true, 0f, 1000f)
         };
         
         hitbox.x = 8;
         hitbox.y = 8;
         hitbox.width = 46;
-        hitbox.height = 46;
-        
+        hitbox.height = 46;        
         health = 40;
+        speed = Util.Rand(0.0002f, 0.0008f);
     }
     
     private void setNewTarget(){
@@ -41,15 +41,10 @@ public class EnemyShip extends Ship {
         target.y = Util.Rand(ShmuperDuper.height / 2f);
     }
 
-    public void update(float dt, BulletManager bulletMan) {
+    public void update(float dt, BulletManager bulletMan, ShipManager shipMan) {
         for (int i = 0; i < emitters.length; i++) {
             BulletEmitter be = emitters[i];
-            if (be.fire()) {
-                bulletMan.fireEnemy(x + be.offsetX, y + be.offsetY, be.speed, (float)Math.toRadians(90));
-            }
-        }
-        for (int i = 0; i < emitters.length; i++) {
-            emitters[i].update(dt);
+            emitters[i].update(dt, x + be.offsetX, y + be.offsetY, bulletMan.enemyBullets, 22, 22, 18, 18, 1, 0, shipMan.player, "fire_enemy");
         }
         
         x = Util.Lerp(x, target.x, speed * dt);
