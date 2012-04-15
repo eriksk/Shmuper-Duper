@@ -65,7 +65,7 @@ public class GameManager {
     }
     
     public void reset(){
-        AudioManager.I().resetSong("song1");
+        //AudioManager.I().resetSong("song1");
         shipMan.player.score = 0;
         shipMan.reset();
         spawner.reset();

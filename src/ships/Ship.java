@@ -25,6 +25,7 @@ public class Ship{
     public float x, y, vx, vy, ox, oy;
     public int srcCol, srcRow;
     public Rectangle hitbox;
+    public int cols, rows;
     
     public Ship(int srcCol, int srcRow) {
         this.srcCol = srcCol;
@@ -33,6 +34,8 @@ public class Ship{
         emitters = new BulletEmitter[0];
         ox = 32;
         oy = 32;
+        cols = 1;
+        rows = 1;
     }
     
     public void update(float dt, BulletManager bulletMan) {

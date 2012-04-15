@@ -30,7 +30,7 @@ public class ParticleManagerImpl extends ParticleManager {
     @Override
     public void load(ContentManager content) {
         super.load(content);
-        particles = new Pool(1024);
+        particles = new Pool(2048);
         particles.init(ListUtils.allocate(particles.getCapacity(), Particle.class));
 
         texture = content.loadImage("gfx/particles.png");
@@ -41,6 +41,17 @@ public class ParticleManagerImpl extends ParticleManager {
         particles.clear();
     }
 
+    public void spawn(float x, float y) {
+            Particle p = (Particle) particles.pop();
+            p.current = 0f;
+            p.duration = Util.Rand(400, 1000);
+            p.x = x + Util.Rand(-64, 64);
+            p.y = y + Util.Rand(-64, 64);
+            p.vx = 0f;
+            p.vy = -1f;
+            p.srcCol = 0;
+            p.srcRow = 0;
+    }
     public void explode(float x, float y) {
         for (int i = 0; i < 64; i++) {
             Particle p = (Particle) particles.pop();

@@ -101,7 +101,15 @@ public class ShipManager {
         texture.startUse();
         for (int i = 0; i < enemies.size(); i++) {
             EnemyShip e = enemies.get(i);
-            sheet.renderInUse((int) (e.x - e.ox), (int) (e.y - e.oy), e.srcCol, e.srcRow);
+            texture.drawEmbedded(
+                    (int) (e.x - e.ox), 
+                    (int) (e.y - e.oy), 
+                    (int) (e.x - e.ox) + (128f * e.cols),
+                    (int) (e.y - e.oy) + (128f * e.rows),
+                    e.srcCol * 128f,
+                    e.srcRow * 128f,
+                    (e.srcCol * 128f) + (128f * e.cols),
+                    (e.srcRow * 128f) + (128f * e.rows));
         }
         texture.endUse();
 

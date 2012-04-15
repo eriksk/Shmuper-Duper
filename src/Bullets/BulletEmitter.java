@@ -25,6 +25,8 @@ public class BulletEmitter {
     public boolean targeted;
     public float angleDiff;
     public float wait;
+    private float startAngle;
+    private int type;
 
     public BulletEmitter(
             float interval,
@@ -35,7 +37,8 @@ public class BulletEmitter {
             float angle,
             boolean targeted,
             float angleDiff,
-            float wait) {
+            float wait,
+            int type) {
         this.interval = interval;
         this.fireCount = fireCount;
         current = 0f;
@@ -46,10 +49,12 @@ public class BulletEmitter {
         this.targeted = targeted;
         this.angleDiff = angleDiff;
         this.wait = wait;
+        this.startAngle = angle;
+        this.type = type;
         fired = 0;
     }
 
-    public void update(float dt, float x, float y, Pool bulletPool, float srcX, float srcY, float srcW, float srcH, int col, int row, PlayerShip player, String sound) {
+    public void update(float dt, float x, float y, Pool bulletPool, float srcX, float srcY, float srcW, float srcH, PlayerShip player, String sound) {
         if (currentWait > wait) {
             current += dt;
             if (current > interval) {
@@ -63,9 +68,9 @@ public class BulletEmitter {
                     }
                     b.vx = (float) Math.cos(angle) * speed;
                     b.vy = (float) Math.sin(angle) * speed;
-                    b.rotation = angle;
-                    b.srcCol = col;
-                    b.srcRow = row;
+                    b.rotation = angle;                    
+                    b.srcCol = type % 8;
+                    b.srcRow = type / 8;
                     b.hitbox.x = srcX;
                     b.hitbox.y = srcY;
                     b.hitbox.width = srcW;
@@ -76,6 +81,7 @@ public class BulletEmitter {
                 } else {
                     currentWait = 0f;
                     fired = 0;
+                    angle = startAngle;
                 }
             }
         } else {

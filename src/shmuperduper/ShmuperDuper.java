@@ -38,6 +38,8 @@ public class ShmuperDuper extends BasicGame {
         gm = new GameManager(width, height);
         gm.load(container);
         container.setShowFPS(false);
+        //container.setMusicOn(false);
+        //container.setSoundOn(false);
     }
 
     @Override

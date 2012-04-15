@@ -36,6 +36,8 @@ public class CollisionManager {
             for (int j = 0; j < enemies.size(); j++) {
                 EnemyShip e = enemies.get(j);
                 if (intersects(b, e)){
+                    AudioManager.I().playSound("hit");
+                    pMan.spawn(b.x, b.y - 64);
                     e.health--;
                     playerBullets.push(i--);
                     if (e.health <= 0) {
